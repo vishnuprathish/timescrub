@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://timescrub.io/sitemap.xml
+Sitemap: https://timescrub.app/sitemap.xml
