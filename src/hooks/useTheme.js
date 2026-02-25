@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 
 export const THEMES = [
-  { id: 'dark',     label: 'Dark',     swatch: '#151820' },
-  { id: 'light',    label: 'Light',    swatch: '#f4f5f7' },
-  { id: 'midnight', label: 'Midnight', swatch: '#0d1020' },
-  { id: 'mocha',    label: 'Mocha',    swatch: '#181410' },
+  { id: 'light',    label: 'Light',    swatch: '#2563eb' },
+  { id: 'dark',     label: 'Dark',     swatch: '#4f8ef7' },
+  { id: 'midnight', label: 'Midnight', swatch: '#a78bfa' },
+  { id: 'mocha',    label: 'Mocha',    swatch: '#f59e0b' },
 ];
 
 const STORAGE_KEY = 'timescrub-theme';
-const DEFAULT = 'dark';
+const DEFAULT = 'light';
 
 function applyTheme(id) {
   document.documentElement.setAttribute('data-theme', id);
