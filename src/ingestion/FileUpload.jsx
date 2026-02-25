@@ -157,6 +157,36 @@ export default function FileUpload() {
           </div>
         </div>
 
+        {/* How it works */}
+        <div className="how-it-works">
+          <div className="how-label">How it works</div>
+          <div className="how-steps">
+            {[
+              {
+                num: '1',
+                title: 'Upload',
+                desc: 'Drop a CSV, Excel, JSON, or JSONL file — or paste data directly. Large files generate processing scripts instead.',
+              },
+              {
+                num: '2',
+                title: 'Profile',
+                desc: 'Instantly see frequency, gaps, outliers, quality score, correlations, stationarity, and seasonality.',
+              },
+              {
+                num: '3',
+                title: 'Clean & Export',
+                desc: 'Apply operations with full undo, then download cleaned data as CSV, Excel, JSON, or Parquet — or get Python/R scripts.',
+              },
+            ].map(({ num, title, desc }) => (
+              <div key={num} className="how-step">
+                <div className="how-step-num">{num}</div>
+                <div className="how-step-title">{title}</div>
+                <div className="how-step-desc">{desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Feature highlights */}
         <div className="feature-grid">
           {[
@@ -173,6 +203,31 @@ export default function FileUpload() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Footer */}
+        <div className="upload-footer">
+          <span>© 2025 TimeScrub</span>
+          <span className="footer-sep">·</span>
+          <a
+            href="https://github.com/vishnuprathish/timescrub/blob/main/CHANGELOG.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            Changelog
+          </a>
+          <span className="footer-sep">·</span>
+          <a
+            href="https://github.com/vishnuprathish/timescrub"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            GitHub
+          </a>
+          <span className="footer-sep">·</span>
+          <span className="footer-privacy">No data sent to any server</span>
         </div>
       </div>
     </div>

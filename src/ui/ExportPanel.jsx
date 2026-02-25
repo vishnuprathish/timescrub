@@ -7,11 +7,13 @@ import { downloadJSON, downloadOperationLog, downloadQualityReport } from '../ex
 import { generatePythonScript } from '../export/pythonScriptGen.js';
 import { generateRScript } from '../export/rScriptGen.js';
 import { triggerDownload } from '../export/csvExporter.js';
+import { downloadParquet } from '../export/parquetExporter.js';
 
 export default function ExportPanel({ onClose }) {
   const { cleanedData, rawData, operationLog, profiling, ui } = useStore();
   const [scriptLang, setScriptLang] = useState('python');
   const [scriptVisible, setScriptVisible] = useState(false);
+  const [parquetLoading, setParquetLoading] = useState(false);
 
   const data = cleanedData || rawData;
   const filename = ui.filename || 'data.csv';
@@ -76,7 +78,27 @@ export default function ExportPanel({ onClose }) {
                 >
                   JSON
                 </button>
+                <button
+                  className="btn btn-secondary"
+                  disabled={parquetLoading}
+                  onClick={async () => {
+                    setParquetLoading(true);
+                    try {
+                      await downloadParquet(data, `cleaned_${filename.replace(/\.[^.]+$/, '.parquet')}`);
+                      trackExport('parquet');
+                    } catch (e) {
+                      useStore.getState().addToast('error', `Parquet export failed: ${e.message}`);
+                    } finally {
+                      setParquetLoading(false);
+                    }
+                  }}
+                >
+                  {parquetLoading ? 'Exporting…' : 'Parquet'}
+                </button>
               </div>
+              {parquetLoading && (
+                <div className="text-xs text-muted mt-1">Loading DuckDB-WASM from CDN…</div>
+              )}
               <div className="text-xs text-muted mt-2">
                 {data?.length.toLocaleString()} rows · {data?.length > 0 ? Object.keys(data[0]).length : 0} columns
                 {operationLog.length > 0 && ` · ${operationLog.length} cleaning ops applied`}

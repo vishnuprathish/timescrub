@@ -228,3 +228,90 @@
 .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
 .feature-title { font-size: var(--font-size-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
 .feature-desc { font-size: var(--font-size-xs); color: var(--text-muted); line-height: 1.4; }
+
+/* ── How it works ──────────────────────────────────────────────── */
+.how-it-works {
+  margin-bottom: var(--space-5);
+}
+
+.how-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .how-steps { grid-template-columns: 1fr; }
+}
+
+.how-step {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  position: relative;
+}
+
+.how-step-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  background: var(--accent-dim, color-mix(in srgb, var(--accent) 15%, transparent));
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+}
+
+.how-step-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.how-step-desc {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Footer ────────────────────────────────────────────────────── */
+.upload-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: var(--space-4) 0 var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.footer-sep { opacity: 0.4; }
+
+.footer-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer-link:hover { color: var(--text-secondary); }
+
+.footer-privacy {
+  color: var(--success, #40c080);
+  opacity: 0.8;
+}
