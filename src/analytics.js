@@ -136,3 +136,13 @@ export function trackParseError(format, error) {
     error: String(error).slice(0, 120).replace(/\/[^\s]+/g, '[path]'),
   });
 }
+
+/** User opened the feedback widget. */
+export function trackFeedbackOpen() {
+  track('Feedback Open');
+}
+
+/** User submitted a feedback response. */
+export function trackFeedbackSubmit() {
+  track('Feedback Submit');
+}

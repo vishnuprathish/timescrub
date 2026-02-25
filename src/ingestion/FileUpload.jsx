@@ -4,6 +4,7 @@ import { isLargeFile, formatFileSize, detectFileType, readFileHead, detectDelimi
 import { SAMPLE_DATASETS } from './sampleDatasets.js';
 import { trackFileUpload, trackSampleLoad } from '../analytics.js';
 import ThemeSwitcher from '../ui/ThemeSwitcher.jsx';
+import FeedbackButton from '../ui/FeedbackButton.jsx';
 import '../styles/upload.css';
 
 const ACCEPTED = '.csv,.tsv,.xlsx,.xls,.json,.jsonl,.ndjson';
@@ -69,7 +70,8 @@ export default function FileUpload() {
 
   return (
     <div className="upload-page">
-      <div style={{ position: 'fixed', top: 12, right: 16, zIndex: 50 }}>
+      <div style={{ position: 'fixed', top: 12, right: 16, zIndex: 50, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <FeedbackButton />
         <ThemeSwitcher />
       </div>
       <div className="upload-container">
