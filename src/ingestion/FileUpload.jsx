@@ -3,6 +3,7 @@ import useStore from '../store/store.js';
 import { isLargeFile, formatFileSize, detectFileType, readFileHead, detectDelimiter, LARGE_FILE_SAMPLE_ROWS } from './csvParser.js';
 import { SAMPLE_DATASETS } from './sampleDatasets.js';
 import { trackFileUpload, trackSampleLoad } from '../analytics.js';
+import ThemeSwitcher from '../ui/ThemeSwitcher.jsx';
 import '../styles/upload.css';
 
 const ACCEPTED = '.csv,.tsv,.xlsx,.xls,.json,.jsonl,.ndjson';
@@ -68,6 +69,9 @@ export default function FileUpload() {
 
   return (
     <div className="upload-page">
+      <div style={{ position: 'fixed', top: 12, right: 16, zIndex: 50 }}>
+        <ThemeSwitcher />
+      </div>
       <div className="upload-container">
         {/* Header */}
         <div className="upload-header">

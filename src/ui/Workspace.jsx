@@ -8,6 +8,7 @@ import QualityTab from './QualityTab.jsx';
 import ColumnsTab from './ColumnsTab.jsx';
 import LogTab from './LogTab.jsx';
 import ExportPanel from './ExportPanel.jsx';
+import ThemeSwitcher from './ThemeSwitcher.jsx';
 import '../styles/workspace.css';
 
 const TABS = [
@@ -75,6 +76,7 @@ export default function Workspace() {
             {operationLog.length > 0 && (
               <div className="badge badge-accent">{operationLog.length} ops</div>
             )}
+            <ThemeSwitcher />
           </div>
         </div>
 

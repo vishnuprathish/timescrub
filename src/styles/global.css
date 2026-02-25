@@ -77,6 +77,91 @@
 }
 
 /* ============================================================
+   Theme: Light
+   ============================================================ */
+[data-theme="light"] {
+  --bg-base: #f4f5f7;
+  --bg-surface: #ffffff;
+  --bg-sidebar: #eef0f4;
+  --bg-panel: #f0f2f6;
+  --bg-card: #ffffff;
+  --bg-hover: #e6e9f0;
+  --bg-active: #dde1ec;
+  --bg-input: #ffffff;
+  --border: #d4d8e4;
+  --border-subtle: #e0e3ec;
+  --border-strong: #b8bdd0;
+  --text-primary: #1a1e2c;
+  --text-secondary: #4a5270;
+  --text-muted: #8892aa;
+  --text-mono: #1e2438;
+  --accent: #3a7ef0;
+  --accent-dim: #dce8ff;
+  --accent-hover: #2a6ee0;
+  --accent-glow: rgba(58, 126, 240, 0.08);
+  --success-dim: #d4f0e2;
+  --warning-dim: #fff0d8;
+  --danger-dim: #fde0e0;
+}
+
+/* ============================================================
+   Theme: Midnight
+   ============================================================ */
+[data-theme="midnight"] {
+  --bg-base: #080b14;
+  --bg-surface: #0d1020;
+  --bg-sidebar: #0a0d1a;
+  --bg-panel: #111428;
+  --bg-card: #151930;
+  --bg-hover: #1a1f38;
+  --bg-active: #202540;
+  --bg-input: #090c18;
+  --border: #1a1f38;
+  --border-subtle: #121630;
+  --border-strong: #252c50;
+  --text-primary: #c8d4f0;
+  --text-secondary: #6878a8;
+  --text-muted: #3a4468;
+  --text-mono: #b0c0e8;
+  --accent: #8070ff;
+  --accent-dim: #28207a;
+  --accent-hover: #9a8aff;
+  --accent-glow: rgba(128, 112, 255, 0.15);
+  --success: #40c878;
+  --success-dim: #103a22;
+  --warning-dim: #3a2808;
+  --danger-dim: #3a0e0e;
+}
+
+/* ============================================================
+   Theme: Mocha
+   ============================================================ */
+[data-theme="mocha"] {
+  --bg-base: #100d0a;
+  --bg-surface: #181410;
+  --bg-sidebar: #140f0c;
+  --bg-panel: #1e1812;
+  --bg-card: #221c14;
+  --bg-hover: #2c2418;
+  --bg-active: #342c1e;
+  --bg-input: #120f0c;
+  --border: #2c2418;
+  --border-subtle: #201a12;
+  --border-strong: #3e3224;
+  --text-primary: #e8ddd0;
+  --text-secondary: #9a8a78;
+  --text-muted: #60503e;
+  --text-mono: #d8cfc0;
+  --accent: #d4885a;
+  --accent-dim: #4a2a14;
+  --accent-hover: #e09a70;
+  --accent-glow: rgba(212, 136, 90, 0.15);
+  --success-dim: #143018;
+  --warning-dim: #3a2808;
+  --danger-dim: #3a1010;
+}
+
+/* ============================================================
    Reset & Base
    ============================================================ */
 *, *::before, *::after {

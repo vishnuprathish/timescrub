@@ -94,6 +94,14 @@
     <!-- ============================================================
          Favicon + theme
          ============================================================ -->
+    <!-- Apply saved theme before first paint to prevent flash -->
+    <script>
+      (function() {
+        var t = localStorage.getItem('timescrub-theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0d0f12" />
