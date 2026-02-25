@@ -9,6 +9,9 @@ import { detectFrequency, extractTimestamps } from '../profiling/frequencyDetect
 import { detectGaps, detectDuplicates } from '../profiling/gapDetector.js';
 import { detectOutliers } from '../profiling/outlierDetector.js';
 import { computeQualityScore } from '../profiling/qualityScore.js';
+import { runAdfTests } from '../profiling/stationarityTest.js';
+import { computeCorrelationMatrix } from '../profiling/correlationMatrix.js';
+import { detectSeasonality } from '../profiling/seasonalityDetector.js';
 
 export default function ParseConfigPanel() {
   const {
@@ -102,6 +105,16 @@ export default function ParseConfigPanel() {
         outliers[col.name] = detectOutliers(vals, { method: 'iqr' });
       }
 
+      setUI({ progress: 80 });
+
+      // Advanced profiling: ADF stationarity, correlation matrix, seasonality
+      const stationarityResults = runAdfTests(rows, numericCols);
+      const correlationMatrix = computeCorrelationMatrix(rows, columnStats);
+      const seasonality =
+        tsCol && freqResult.medianMs && numericCols.length > 0
+          ? detectSeasonality(rows, tsCol, numericCols[0].name, freqResult.medianMs)
+          : null;
+
       setUI({ progress: 85 });
 
       const timeRange = timestamps.length > 0
@@ -129,6 +142,9 @@ export default function ParseConfigPanel() {
         outliers,
         qualityScore: score,
         qualityDimensions: dimensions,
+        stationarityResults,
+        correlationMatrix,
+        seasonality,
       });
 
       setColumns(cols);

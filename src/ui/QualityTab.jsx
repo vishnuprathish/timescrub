@@ -14,7 +14,6 @@ function GapTimeline({ gaps, timeRange }) {
   return (
     <div style={{ padding: 'var(--space-3) 0' }}>
       <div style={{ position: 'relative', height: 20, background: 'var(--success-dim)', borderRadius: 3, overflow: 'hidden' }}>
-        {/* Green base = data present */}
         {gaps.map((gap, i) => {
           const left = ((gap.start.getTime() - minT) / totalMs) * 100;
           const width = ((gap.durationMs) / totalMs) * 100;
@@ -41,7 +40,6 @@ function GapTimeline({ gaps, timeRange }) {
         <span>{new Date(maxT).toLocaleDateString()}</span>
       </div>
 
-      {/* Gap list */}
       <div className="data-table-wrap mt-3">
         <table className="data-table">
           <thead>
@@ -163,9 +161,259 @@ function NullHeatmapChart({ matrix, buckets, columnNames }) {
   return <div ref={ref} style={{ height: 220 }} />;
 }
 
+// -----------------------------------------------------------------------
+// NEW: Correlation Heatmap
+// -----------------------------------------------------------------------
+function CorrelationHeatmap({ correlationMatrix }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!correlationMatrix || !ref.current) return;
+    const { columns, matrix } = correlationMatrix;
+
+    const renderPlotly = async () => {
+      const Plotly = (await import('plotly.js-dist-min')).default;
+
+      // Build annotation text
+      const textMatrix = matrix.map((row) =>
+        row.map((v) => (v !== null ? v.toFixed(2) : ''))
+      );
+
+      Plotly.react(ref.current, [{
+        z: matrix,
+        x: columns,
+        y: columns,
+        type: 'heatmap',
+        colorscale: 'RdBu',
+        zmin: -1,
+        zmid: 0,
+        zmax: 1,
+        text: textMatrix,
+        texttemplate: '%{text}',
+        textfont: { size: 10 },
+        colorbar: { title: 'r', thickness: 12, tickfont: { size: 10, color: '#8892aa' } },
+        hovertemplate: '%{y} × %{x}<br>r = %{z:.3f}<extra></extra>',
+      }], {
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'rgba(21,24,32,0.8)',
+        font: { color: '#8892aa', size: 11 },
+        xaxis: { gridcolor: '#1c2030', linecolor: '#252a38', tickangle: -35 },
+        yaxis: { gridcolor: '#1c2030', linecolor: '#252a38' },
+        margin: { t: 10, r: 80, b: 90, l: 100 },
+      }, { responsive: true, displayModeBar: false, displaylogo: false });
+    };
+
+    renderPlotly();
+  }, [correlationMatrix]);
+
+  const height = correlationMatrix
+    ? Math.max(220, Math.min(500, correlationMatrix.columns.length * 32 + 100))
+    : 220;
+
+  return <div ref={ref} style={{ height }} />;
+}
+
+// -----------------------------------------------------------------------
+// NEW: Stationarity Table (ADF results)
+// -----------------------------------------------------------------------
+function StationarityTable({ results }) {
+  if (!results || results.length === 0) {
+    return (
+      <div className="empty-state" style={{ padding: 'var(--space-4)' }}>
+        <div>No numeric columns to test</div>
+      </div>
+    );
+  }
+
+  const verdictStyle = (level) => {
+    if (level === 'strong' || level === 'moderate') return { color: 'var(--success, #40c080)' };
+    if (level === 'weak') return { color: 'var(--warning, #f0a050)' };
+    return { color: 'var(--danger, #e05050)' };
+  };
+
+  const verdictIcon = (level) => {
+    if (level === 'strong' || level === 'moderate') return '✓';
+    if (level === 'weak') return '~';
+    return '⚠';
+  };
+
+  return (
+    <>
+      <div className="data-table-wrap">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Column</th>
+              <th>ADF Statistic</th>
+              <th>p-value (approx.)</th>
+              <th>Verdict</th>
+              <th>Lags</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((r) => (
+              <tr key={r.column}>
+                <td className="text-mono">{r.column}</td>
+                <td className="text-mono">{r.adfStat.toFixed(4)}</td>
+                <td className="text-mono">{r.pApprox}</td>
+                <td>
+                  <span style={verdictStyle(r.level)}>
+                    {verdictIcon(r.level)} {r.verdict}
+                  </span>
+                </td>
+                <td className="text-muted">{r.lags}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', marginTop: 8 }}>
+        H₀: series has a unit root (non-stationary). Critical values: −3.43 (1%), −2.86 (5%), −2.57 (10%).
+      </div>
+    </>
+  );
+}
+
+// -----------------------------------------------------------------------
+// NEW: Distribution Plots (histogram + box, before/after)
+// -----------------------------------------------------------------------
+function DistributionPlots({ rawData, cleanedData, numericCols, operationLog }) {
+  const [col, setCol] = React.useState(() => numericCols[0]?.name || null);
+  const [showCleaned, setShowCleaned] = React.useState(true);
+  const histRef = useRef(null);
+  const boxRef = useRef(null);
+
+  const hasCleaned = operationLog && operationLog.length > 0;
+
+  useEffect(() => {
+    if (!col || !rawData || !histRef.current || !boxRef.current) return;
+
+    const rawVals = rawData
+      .map((r) => { const v = r[col]; return typeof v === 'number' ? v : parseFloat(v); })
+      .filter((v) => isFinite(v));
+
+    const cleanVals = cleanedData
+      ? cleanedData
+          .map((r) => { const v = r[col]; return typeof v === 'number' ? v : parseFloat(v); })
+          .filter((v) => isFinite(v))
+      : [];
+
+    const renderPlotly = async () => {
+      const Plotly = (await import('plotly.js-dist-min')).default;
+
+      const commonLayout = {
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'rgba(21,24,32,0.8)',
+        font: { color: '#8892aa', size: 11 },
+        margin: { t: 10, r: 20, b: 40, l: 50 },
+        showlegend: hasCleaned && showCleaned,
+        legend: { font: { size: 10 }, bgcolor: 'transparent' },
+      };
+
+      // Histogram
+      const histTraces = [
+        {
+          x: rawVals,
+          type: 'histogram',
+          name: 'Raw',
+          opacity: hasCleaned && showCleaned ? 0.55 : 0.75,
+          marker: { color: '#4f8ef7' },
+          autobinx: true,
+        },
+      ];
+      if (hasCleaned && showCleaned && cleanVals.length > 0) {
+        histTraces.push({
+          x: cleanVals,
+          type: 'histogram',
+          name: 'Cleaned',
+          opacity: 0.55,
+          marker: { color: '#40c080' },
+          autobinx: true,
+        });
+      }
+
+      Plotly.react(histRef.current, histTraces, {
+        ...commonLayout,
+        barmode: 'overlay',
+        xaxis: { title: col, gridcolor: '#1c2030', linecolor: '#252a38' },
+        yaxis: { title: 'Count', gridcolor: '#1c2030', linecolor: '#252a38' },
+      }, { responsive: true, displayModeBar: false, displaylogo: false });
+
+      // Box plot
+      const boxTraces = [
+        {
+          y: rawVals,
+          type: 'box',
+          name: 'Raw',
+          marker: { color: '#4f8ef7' },
+          line: { color: '#4f8ef7' },
+          boxmean: 'sd',
+        },
+      ];
+      if (hasCleaned && showCleaned && cleanVals.length > 0) {
+        boxTraces.push({
+          y: cleanVals,
+          type: 'box',
+          name: 'Cleaned',
+          marker: { color: '#40c080' },
+          line: { color: '#40c080' },
+          boxmean: 'sd',
+        });
+      }
+
+      Plotly.react(boxRef.current, boxTraces, {
+        ...commonLayout,
+        yaxis: { title: col, gridcolor: '#1c2030', linecolor: '#252a38' },
+      }, { responsive: true, displayModeBar: false, displaylogo: false });
+    };
+
+    renderPlotly();
+  }, [col, rawData, cleanedData, showCleaned, hasCleaned]);
+
+  if (!numericCols.length) {
+    return <div className="empty-state"><div>No numeric columns</div></div>;
+  }
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-3)', flexWrap: 'wrap' }}>
+        <select
+          value={col || ''}
+          onChange={(e) => setCol(e.target.value)}
+          style={{ width: 180 }}
+        >
+          {numericCols.map((c) => (
+            <option key={c.name} value={c.name}>{c.name}</option>
+          ))}
+        </select>
+        {hasCleaned && (
+          <button
+            className={`btn btn-sm ${showCleaned ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => setShowCleaned((v) => !v)}
+            title="Toggle cleaned data overlay"
+          >
+            {showCleaned ? '◉ Showing cleaned' : '○ Raw only'}
+          </button>
+        )}
+      </div>
+
+      {/* Histogram */}
+      <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', marginBottom: 4 }}>Distribution</div>
+      <div ref={histRef} style={{ height: 200 }} />
+
+      {/* Box plot */}
+      <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', marginTop: 16, marginBottom: 4 }}>Box Plot</div>
+      <div ref={boxRef} style={{ height: 180 }} />
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------
+// Main QualityTab
+// -----------------------------------------------------------------------
 export default function QualityTab() {
-  const { profiling, cleanedData, columns, parseConfig } = useStore();
-  const { gaps, duplicates, outliers, timeRange, columnStats } = profiling;
+  const { profiling, rawData, cleanedData, columns, parseConfig, operationLog } = useStore();
+  const { gaps, duplicates, outliers, timeRange, columnStats, stationarityResults, correlationMatrix } = profiling;
   const tsCol = parseConfig.timestampColumn;
 
   const numericCols = columns.filter((c) => c.dtype === 'numeric');
@@ -180,21 +428,41 @@ export default function QualityTab() {
     });
   }, [cleanedData, tsCol, numericCols.length]);
 
+  const cardStyle = {
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-md)',
+    padding: 'var(--space-4)',
+    marginBottom: 'var(--space-5)',
+  };
+
   return (
     <div>
       {/* Gap timeline */}
       <h3 className="mb-3">Gap Timeline</h3>
-      <div className="bg-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
+      <div style={cardStyle}>
         <GapTimeline gaps={gaps} timeRange={timeRange} />
       </div>
 
       {/* Null heatmap */}
       <h3 className="mb-3">Null Heatmap</h3>
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
+      <div style={cardStyle}>
         {nullHeatmap && nullHeatmap.matrix.length > 0 ? (
           <NullHeatmapChart matrix={nullHeatmap.matrix} buckets={nullHeatmap.buckets} columnNames={nullHeatmap.columns} />
         ) : (
           <div className="empty-state"><div>No null data to display</div></div>
+        )}
+      </div>
+
+      {/* Correlation heatmap */}
+      <h3 className="mb-3">Correlation Matrix</h3>
+      <div style={cardStyle}>
+        {correlationMatrix ? (
+          <CorrelationHeatmap correlationMatrix={correlationMatrix} />
+        ) : (
+          <div className="empty-state" style={{ padding: 'var(--space-4)' }}>
+            <div>Need ≥ 2 numeric columns to compute correlations</div>
+          </div>
         )}
       </div>
 
@@ -233,7 +501,7 @@ export default function QualityTab() {
               {numericCols.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
             </select>
           </div>
-          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
+          <div style={cardStyle}>
             {acfCol && <AcfPlot data={cleanedData || []} column={acfCol} />}
           </div>
         </>
@@ -243,7 +511,7 @@ export default function QualityTab() {
       {Object.keys(outliers).length > 0 && (
         <>
           <h3 className="mb-3">Outlier Summary</h3>
-          <div className="data-table-wrap">
+          <div className="data-table-wrap mb-5">
             <table className="data-table">
               <thead>
                 <tr><th>Column</th><th>Outliers</th><th>% of rows</th></tr>
@@ -258,6 +526,31 @@ export default function QualityTab() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </>
+      )}
+
+      {/* Stationarity test (ADF) */}
+      {numericCols.length > 0 && (
+        <>
+          <h3 className="mb-3">Stationarity Test (ADF)</h3>
+          <div style={cardStyle}>
+            <StationarityTable results={stationarityResults} />
+          </div>
+        </>
+      )}
+
+      {/* Distribution plots */}
+      {numericCols.length > 0 && (
+        <>
+          <h3 className="mb-3">Distribution</h3>
+          <div style={cardStyle}>
+            <DistributionPlots
+              rawData={rawData || []}
+              cleanedData={cleanedData || []}
+              numericCols={numericCols}
+              operationLog={operationLog}
+            />
           </div>
         </>
       )}

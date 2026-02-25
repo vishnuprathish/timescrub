@@ -58,7 +58,8 @@ export default function OverviewTab() {
     rowCount, columnCount, memoryEstimateBytes, timeRange,
     detectedFrequency, detectedFrequencyMs,
     columnStats, gaps, duplicates, outliers,
-    qualityScore, qualityDimensions
+    qualityScore, qualityDimensions,
+    seasonality,
   } = profiling;
 
   const issues = generateIssues({ columnStats, gaps, duplicates, outliers, rowCount, detectedFrequency });
@@ -96,6 +97,11 @@ export default function OverviewTab() {
           </div>
           {detectedFrequencyMs && (
             <div className="stat-sub">{(detectedFrequencyMs / 1000).toFixed(0)}s median</div>
+          )}
+          {seasonality && (
+            <div className="stat-sub" title={`FFT confidence: ${seasonality.confidence}×`}>
+              ↺ {seasonality.label}
+            </div>
           )}
         </div>
         <div className="stat-card">

@@ -49,6 +49,9 @@ const useStore = create((set, get) => ({
       outlierDensity: null,
       duplicateRate: null,
     },
+    stationarityResults: [],    // [{ column, adfStat, verdict, pApprox, level, lags }]
+    correlationMatrix: null,    // { columns: [], matrix: [[]] } | null
+    seasonality: null,          // { dominantPeriodMs, label, confidence } | null
   },
 
   // ----------------------------------------------------------------
@@ -176,6 +179,9 @@ const useStore = create((set, get) => ({
           outlierDensity: null,
           duplicateRate: null,
         },
+        stationarityResults: [],
+        correlationMatrix: null,
+        seasonality: null,
       },
       operationLog: [],
       ui: {
