@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0d0f12"/>
+
+  <!-- Subtle grid lines -->
+  <g stroke="#1c2030" stroke-width="1">
+    <line x1="0" y1="157" x2="1200" y2="157"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="472" x2="1200" y2="472"/>
+    <line x1="200" y1="0" x2="200" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="1000" y1="0" x2="1000" y2="630"/>
+  </g>
+
+  <!-- Left panel (mock sidebar) -->
+  <rect x="60" y="80" width="200" height="470" rx="8" fill="#111318" stroke="#252a38" stroke-width="1"/>
+  <rect x="76" y="100" width="168" height="14" rx="3" fill="#1e2330"/>
+  <rect x="76" y="124" width="140" height="10" rx="2" fill="#252a38"/>
+  <rect x="76" y="144" width="110" height="10" rx="2" fill="#252a38"/>
+  <rect x="76" y="174" width="168" height="1" fill="#252a38"/>
+
+  <!-- Sidebar section labels -->
+  <rect x="76" y="186" width="90" height="10" rx="2" fill="#3a4060"/>
+  <rect x="76" y="210" width="120" height="10" rx="2" fill="#252a38"/>
+  <rect x="76" y="228" width="100" height="10" rx="2" fill="#252a38"/>
+  <rect x="76" y="256" width="90" height="10" rx="2" fill="#3a4060"/>
+  <rect x="76" y="280" width="130" height="10" rx="2" fill="#252a38"/>
+  <rect x="76" y="298" width="115" height="10" rx="2" fill="#252a38"/>
+  <rect x="76" y="316" width="100" height="10" rx="2" fill="#252a38"/>
+  <rect x="76" y="344" width="90" height="10" rx="2" fill="#3a4060"/>
+  <rect x="76" y="368" width="125" height="10" rx="2" fill="#252a38"/>
+
+  <!-- Apply button -->
+  <rect x="76" y="510" width="168" height="28" rx="4" fill="#4f8ef7"/>
+  <rect x="110" y="519" width="100" height="10" rx="2" fill="rgba(255,255,255,0.5)"/>
+
+  <!-- Main chart area -->
+  <rect x="290" y="80" width="850" height="470" rx="8" fill="#151820" stroke="#252a38" stroke-width="1"/>
+
+  <!-- Tab bar -->
+  <rect x="290" y="80" width="850" height="36" rx="8" fill="#111318"/>
+  <rect x="290" y="104" width="850" height="12" fill="#111318"/>
+  <rect x="306" y="92" width="60" height="16" rx="3" fill="#1a1e27"/>
+  <!-- Active tab underline -->
+  <rect x="306" y="112" width="60" height="2" rx="1" fill="#4f8ef7"/>
+  <rect x="378" y="92" width="48" height="16" rx="3" fill="none"/>
+  <rect x="436" y="92" width="60" height="16" rx="3" fill="none"/>
+  <rect x="506" y="92" width="64" height="16" rx="3" fill="none"/>
+
+  <!-- Chart area -->
+  <rect x="306" y="130" width="818" height="380" rx="4" fill="#12151c"/>
+
+  <!-- Gap region (shaded) -->
+  <rect x="560" y="130" width="60" height="380" fill="rgba(240,160,80,0.07)"/>
+  <rect x="750" y="130" width="35" height="380" fill="rgba(240,160,80,0.07)"/>
+
+  <!-- Original series (gray) -->
+  <polyline
+    points="320,350 360,330 400,310 430,340 470,360 500,380 540,350 560,340 625,300 660,280 700,310 740,350 790,330 830,290 870,260 910,280 950,310 990,285 1030,260 1070,290 1110,310"
+    stroke="rgba(85,96,112,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="none"/>
+
+  <!-- Cleaned series (accent blue, prominent) -->
+  <polyline
+    points="320,350 360,330 400,310 430,340 470,360 500,380 540,350 566,342 580,320 600,305 622,298 660,278 700,308 740,348 790,328 830,288 870,258 910,278 950,308 990,283 1030,258 1070,288 1110,308"
+    stroke="#4f8ef7" stroke-width="2.5" fill="none"/>
+
+  <!-- Second series (pink) -->
+  <polyline
+    points="320,280 360,260 400,250 440,270 480,290 520,310 555,295 580,265 620,250 660,240 700,265 745,280 790,260 835,230 875,215 915,235 955,255 995,230 1035,210 1075,240 1110,258"
+    stroke="#e05090" stroke-width="2" fill="none"/>
+
+  <!-- Outlier dots -->
+  <circle cx="470" cy="220" r="5" fill="none" stroke="#f0a050" stroke-width="2"/>
+  <circle cx="800" cy="200" r="5" fill="none" stroke="#f0a050" stroke-width="2"/>
+
+  <!-- Range slider area -->
+  <rect x="306" y="510" width="818" height="18" rx="3" fill="#111318"/>
+  <rect x="306" y="510" width="818" height="18" rx="3" fill="none" stroke="#252a38" stroke-width="1"/>
+  <rect x="400" y="514" width="500" height="10" rx="2" fill="#1e2330"/>
+  <rect x="400" y="514" width="200" height="10" rx="2" fill="#2a3045"/>
+
+  <!-- Y axis ticks -->
+  <g fill="#556070" font-family="system-ui,sans-serif" font-size="10">
+    <text x="316" y="154">400</text>
+    <text x="316" y="230">350</text>
+    <text x="316" y="310">300</text>
+    <text x="316" y="390">250</text>
+    <text x="316" y="464">200</text>
+  </g>
+
+  <!-- Gap label -->
+  <g fill="#f0a050" font-family="system-ui,sans-serif" font-size="10">
+    <text x="563" y="148">gap</text>
+    <text x="753" y="148">gap</text>
+  </g>
+
+  <!-- Stats cards (below chart, mock) -->
+  <!-- Already part of the main screenshot area -->
+
+  <!-- ============================================================
+       Centered logo + tagline
+       ============================================================ -->
+
+  <!-- Logo text, centered in the upper portion -->
+  <text
+    x="600" y="590"
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    font-size="15"
+    font-weight="400"
+    fill="#556070"
+    text-anchor="middle"
+    letter-spacing="0.5"
+  >Clean timeseries data in your browser. No signup. No data leaves your machine.</text>
+
+  <!-- Brand name -->
+  <text
+    x="175" y="57"
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    font-size="26"
+    font-weight="800"
+    fill="#e2e6f0"
+    letter-spacing="-0.5"
+  >time<tspan fill="#4f8ef7">scrub</tspan></text>
+
+  <!-- Corner accent line -->
+  <rect x="0" y="0" width="1200" height="3" fill="#4f8ef7"/>
+
+  <!-- Feature pills -->
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12">
+    <!-- Pill 1 -->
+    <rect x="300" y="44" width="108" height="22" rx="11" fill="#1a2540" stroke="#2a4a8a" stroke-width="1"/>
+    <text x="354" y="58" text-anchor="middle" fill="#4f8ef7">Gap Detection</text>
+
+    <!-- Pill 2 -->
+    <rect x="420" y="44" width="120" height="22" rx="11" fill="#2a1a30" stroke="#5a2060" stroke-width="1"/>
+    <text x="480" y="58" text-anchor="middle" fill="#e05090">Outlier Removal</text>
+
+    <!-- Pill 3 -->
+    <rect x="552" y="44" width="100" height="22" rx="11" fill="#1a3020" stroke="#2a5030" stroke-width="1"/>
+    <text x="602" y="58" text-anchor="middle" fill="#3dba74">Imputation</text>
+
+    <!-- Pill 4 -->
+    <rect x="664" y="44" width="92" height="22" rx="11" fill="#2a2010" stroke="#4a3010" stroke-width="1"/>
+    <text x="710" y="58" text-anchor="middle" fill="#f0a050">Resampling</text>
+
+    <!-- Pill 5 -->
+    <rect x="768" y="44" width="118" height="22" rx="11" fill="#1a2540" stroke="#2a4a8a" stroke-width="1"/>
+    <text x="827" y="58" text-anchor="middle" fill="#4f8ef7">Python Scripts</text>
+
+    <!-- Pill 6 -->
+    <rect x="898" y="44" width="88" height="22" rx="11" fill="#2a1a30" stroke="#5a2060" stroke-width="1"/>
+    <text x="942" y="58" text-anchor="middle" fill="#e05090">R Scripts</text>
+  </g>
+</svg>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ============================================================
+         Primary SEO
+         ============================================================ -->
+    <title>TimeScrub — Free Browser-Based Timeseries Data Cleaning</title>
+    <meta name="description" content="Clean timeseries data directly in your browser. Detect gaps, fix outliers, impute missing values, resample, and export Python/R scripts — no signup, no uploads to a server." />
+    <meta name="keywords" content="timeseries cleaning, time series data, missing value imputation, outlier detection, resampling, data cleaning tool, pandas, csv cleaner, data science tool, free data tool" />
+    <meta name="author" content="TimeScrub" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://timescrub.io/" />
+
+    <!-- ============================================================
+         Open Graph (Facebook, LinkedIn, Slack, etc.)
+         ============================================================ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://timescrub.io/" />
+    <meta property="og:title" content="TimeScrub — Free Timeseries Data Cleaning" />
+    <meta property="og:description" content="Profile, clean, and export timeseries data entirely in your browser. Detect gaps, fix outliers, resample, and generate Python or R cleaning scripts. Free, no signup." />
+    <meta property="og:image" content="https://timescrub.io/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="TimeScrub — browser-based timeseries data cleaning tool" />
+    <meta property="og:site_name" content="TimeScrub" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- ============================================================
+         Twitter / X Card
+         ============================================================ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@timescrub_io" />
+    <meta name="twitter:title" content="TimeScrub — Free Timeseries Data Cleaning" />
+    <meta name="twitter:description" content="Profile, clean, and export timeseries data in your browser. No signup. No data leaves your machine. Generates Python &amp; R scripts." />
+    <meta name="twitter:image" content="https://timescrub.io/og-image.png" />
+    <meta name="twitter:image:alt" content="TimeScrub dashboard showing timeseries chart with gap detection" />
+
+    <!-- ============================================================
+         Structured Data (JSON-LD — WebApplication)
+         ============================================================ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "TimeScrub",
+      "url": "https://timescrub.io",
+      "description": "Free browser-based timeseries data cleaning tool. Profile datasets, detect gaps and outliers, impute missing values, resample, smooth, and export Python or R cleaning scripts.",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any (runs in browser)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "CSV, Excel, JSON upload",
+        "Auto-detect timestamp column and sampling frequency",
+        "Gap and outlier detection",
+        "Missing value imputation (forward fill, linear interpolation, spline)",
+        "Outlier treatment (IQR clip, Z-score, rolling Z-score)",
+        "Resampling (upsample / downsample)",
+        "EWMA and rolling mean smoothing",
+        "Python and R script export",
+        "No data sent to any server"
+      ],
+      "screenshot": "https://timescrub.io/og-image.png",
+      "creator": {
+        "@type": "Organization",
+        "name": "TimeScrub",
+        "url": "https://timescrub.io"
+      }
+    }
+    </script>
+
+    <!-- ============================================================
+         Plausible Analytics — privacy-first, no cookies, GDPR OK
+         Replace "timescrub.io" with your actual domain after deploy.
+         ============================================================ -->
+    <script
+      defer
+      data-domain="timescrub.io"
+      src="https://plausible.io/js/script.tagged-events.js"
+    ></script>
+    <!-- Plausible custom event helper — fails silently if blocked -->
+    <script>
+      window.plausible = window.plausible || function() {
+        (window.plausible.q = window.plausible.q || []).push(arguments);
+      };
+    </script>
+
+    <!-- ============================================================
+         Favicon + theme
+         ============================================================ -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0d0f12" />
+    <meta name="color-scheme" content="dark" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
