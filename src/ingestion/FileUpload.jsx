@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import useStore from '../store/store.js';
 import { isLargeFile, formatFileSize, detectFileType, readFileHead, detectDelimiter, LARGE_FILE_SAMPLE_ROWS } from './csvParser.js';
 import { SAMPLE_DATASETS } from './sampleDatasets.js';
-import { trackFileUpload, trackSampleLoad } from '../analytics.js';
+import { trackFileUpload, trackSampleLoad, trackUrlImport } from '../analytics.js';
 import ThemeSwitcher from '../ui/ThemeSwitcher.jsx';
 import FeedbackButton from '../ui/FeedbackButton.jsx';
 import '../styles/upload.css';
@@ -13,8 +13,11 @@ export default function FileUpload() {
   const { setUI, setParseConfig } = useStore();
   const fileInputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
-  const [pasteMode, setPasteMode] = useState(false);
+  const [activeTab, setActiveTab] = useState('upload'); // 'upload' | 'paste' | 'url'
   const [pasteText, setPasteText] = useState('');
+  const [urlText, setUrlText] = useState('');
+  const [urlLoading, setUrlLoading] = useState(false);
+  const [urlError, setUrlError] = useState('');
 
   const handleFile = useCallback(async (file) => {
     const ext = detectFileType(file.name);
@@ -68,6 +71,31 @@ export default function FileUpload() {
     handleFile(file);
   };
 
+  const handleUrlImport = async () => {
+    const url = urlText.trim();
+    if (!url) return;
+    setUrlError('');
+    setUrlLoading(true);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      // Derive filename from URL path
+      const pathPart = new URL(url).pathname.split('/').pop() || 'imported_data.csv';
+      const filename = pathPart.includes('.') ? pathPart : `${pathPart}.csv`;
+      const file = new File([blob], filename, { type: blob.type || 'text/csv' });
+      trackUrlImport(filename);
+      handleFile(file);
+    } catch (e) {
+      const msg = e.message.includes('Failed to fetch')
+        ? 'Could not fetch URL. The server may not allow cross-origin requests (CORS).'
+        : `Fetch failed: ${e.message}`;
+      setUrlError(msg);
+    } finally {
+      setUrlLoading(false);
+    }
+  };
+
   return (
     <div className="upload-page">
       <div style={{ position: 'fixed', top: 12, right: 16, zIndex: 50, display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -89,15 +117,18 @@ export default function FileUpload() {
 
         {/* Tab toggle */}
         <div className="upload-tabs">
-          <button className={`upload-tab ${!pasteMode ? 'active' : ''}`} onClick={() => setPasteMode(false)}>
+          <button className={`upload-tab ${activeTab === 'upload' ? 'active' : ''}`} onClick={() => setActiveTab('upload')}>
             Upload File
           </button>
-          <button className={`upload-tab ${pasteMode ? 'active' : ''}`} onClick={() => setPasteMode(true)}>
-            Paste CSV
+          <button className={`upload-tab ${activeTab === 'paste' ? 'active' : ''}`} onClick={() => setActiveTab('paste')}>
+            Paste Data
+          </button>
+          <button className={`upload-tab ${activeTab === 'url' ? 'active' : ''}`} onClick={() => setActiveTab('url')}>
+            From URL
           </button>
         </div>
 
-        {!pasteMode ? (
+        {activeTab === 'upload' && (
           <>
             {/* Drop zone */}
             <div
@@ -122,11 +153,13 @@ export default function FileUpload() {
               />
             </div>
           </>
-        ) : (
+        )}
+
+        {activeTab === 'paste' && (
           <div className="paste-zone">
             <textarea
               className="paste-textarea"
-              placeholder="Paste your CSV data here..."
+              placeholder="Paste CSV, TSV, or tab-separated data from Excel or Google Sheets here…"
               value={pasteText}
               onChange={(e) => setPasteText(e.target.value)}
               rows={10}
@@ -136,8 +169,40 @@ export default function FileUpload() {
               disabled={!pasteText.trim()}
               onClick={handlePasteSubmit}
             >
-              Parse CSV
+              Parse Data
             </button>
+          </div>
+        )}
+
+        {activeTab === 'url' && (
+          <div className="paste-zone">
+            <div className="text-xs text-muted mb-2">
+              Enter a direct URL to a publicly accessible CSV, TSV, JSON, or Excel file.
+            </div>
+            <input
+              type="url"
+              className="form-input"
+              placeholder="https://example.com/data.csv"
+              value={urlText}
+              onChange={(e) => { setUrlText(e.target.value); setUrlError(''); }}
+              onKeyDown={(e) => e.key === 'Enter' && handleUrlImport()}
+              style={{ width: '100%', marginBottom: 'var(--space-2)' }}
+            />
+            {urlError && (
+              <div className="text-xs" style={{ color: 'var(--danger)', marginBottom: 'var(--space-2)' }}>
+                {urlError}
+              </div>
+            )}
+            <button
+              className="btn btn-primary btn-full"
+              disabled={!urlText.trim() || urlLoading}
+              onClick={handleUrlImport}
+            >
+              {urlLoading ? 'Fetching…' : 'Fetch & Load'}
+            </button>
+            <div className="text-xs text-muted mt-2">
+              The server must allow cross-origin (CORS) requests. GitHub raw files, Gist, and public S3/GCS URLs work.
+            </div>
           </div>
         )}
 

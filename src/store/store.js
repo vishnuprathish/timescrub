@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { replayPipeline } from '../cleaning/pipeline.js';
+import { computeColumnStats } from '../profiling/columnStats.js';
 
 /**
  * Central Zustand store.
@@ -147,6 +149,51 @@ const useStore = create((set, get) => ({
     set((state) => ({
       ui: { ...state.ui, toasts: state.ui.toasts.filter((t) => t.id !== id) },
     })),
+
+  /**
+   * Apply a set of slim ops (from a shared URL or recipe) onto the current rawData.
+   * slim ops shape: [{ op, params, description }]
+   */
+  applySharedOps: (slimOps) => {
+    const state = get();
+    const { rawData, columns, operationLog, profiling } = state;
+    if (!rawData) return;
+
+    // Reconstruct full op objects with IDs
+    const newOps = slimOps.map((slim) => ({
+      id: crypto.randomUUID(),
+      op: slim.op,
+      params: slim.params || {},
+      description: slim.description || slim.op,
+      appliedAt: Date.now(),
+    }));
+
+    const newLog = [...operationLog, ...newOps];
+    const newData = replayPipeline(rawData, newLog);
+
+    const newColNames = newData.length > 0 ? Object.keys(newData[0]) : [];
+    const updatedCols = newColNames.map((name) => {
+      const existing = columns.find((c) => c.name === name);
+      return existing || { name, dtype: 'string' };
+    });
+
+    const newStats = computeColumnStats(newData, updatedCols);
+
+    set({
+      cleanedData: newData,
+      columns: updatedCols,
+      operationLog: newLog,
+    });
+
+    set((s) => ({
+      profiling: {
+        ...s.profiling,
+        columnStats: newStats,
+        rowCount: newData.length,
+        columnCount: updatedCols.length,
+      },
+    }));
+  },
 
   // Full reset
   reset: () =>

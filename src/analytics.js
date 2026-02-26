@@ -146,3 +146,28 @@ export function trackFeedbackOpen() {
 export function trackFeedbackSubmit() {
   track('Feedback Submit');
 }
+
+/**
+ * User imported data from a remote URL.
+ * @param {string} filename  derived from URL path
+ */
+export function trackUrlImport(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  track('URL Import', { format: ext });
+}
+
+/**
+ * User copied a shareable pipeline URL.
+ * @param {number} opCount  number of operations in the pipeline
+ */
+export function trackShare(opCount) {
+  track('Share', { op_count: String(opCount) });
+}
+
+/**
+ * User applied a shared pipeline or recipe.
+ * @param {'url'|'recipe'} source
+ */
+export function trackApplyPipeline(source) {
+  track('Apply Pipeline', { source });
+}

@@ -423,3 +423,149 @@
 
 .col-name-input:hover { border-color: var(--border); }
 .col-name-input:focus { border-color: var(--accent); background: var(--bg-input); outline: none; }
+
+/* ============================================================
+   Keyboard Shortcuts Modal
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 360px;
+  max-width: 95vw;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: var(--space-4);
+}
+
+.shortcuts-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.shortcuts-table tr + tr td {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.shortcut-keys {
+  padding: var(--space-2) var(--space-2) var(--space-2) 0;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.shortcut-label {
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.shortcut-plus {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 0 2px;
+}
+
+.kbd {
+  display: inline-block;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 0 var(--border);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   Shared Ops Banner
+   ============================================================ */
+.shared-ops-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent-dim);
+  border-bottom: 1px solid var(--accent);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.shared-ops-banner span { flex: 1; }
+
+/* ============================================================
+   Recipes Section (LogTab)
+   ============================================================ */
+.recipes-section {
+  padding-top: var(--space-1);
+}
+
+.recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.recipe-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+
+.recipe-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.recipe-name {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipe-meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.recipe-actions {
+  display: flex;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}

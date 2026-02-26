@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import useStore from '../store/store.js';
 import { trackTabView } from '../analytics.js';
+import { replayPipeline } from '../cleaning/pipeline.js';
+import { computeColumnStats } from '../profiling/columnStats.js';
 import OperationsPanel from './OperationsPanel.jsx';
 import OverviewTab from './OverviewTab.jsx';
 import PlotTab from './PlotTab.jsx';
@@ -10,6 +12,9 @@ import LogTab from './LogTab.jsx';
 import ExportPanel from './ExportPanel.jsx';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import FeedbackButton from './FeedbackButton.jsx';
+import ShareButton from './ShareButton.jsx';
+import KeyboardShortcutsModal from './KeyboardShortcutsModal.jsx';
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts.js';
 import '../styles/workspace.css';
 
 const TABS = [
@@ -21,8 +26,12 @@ const TABS = [
 ];
 
 export default function Workspace() {
-  const { ui, profiling, operationLog, cleanedData, setUI, reset } = useStore();
+  const { ui, profiling, operationLog, cleanedData, setUI, reset, removeOperation, setCleanedData } = useStore();
   const [exportOpen, setExportOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [sharedOpsBanner, setSharedOpsBanner] = useState(
+    () => useStore.getState()._pendingSharedOps || null
+  );
 
   const qualityScore = profiling.qualityScore;
   const qualityClass = qualityScore >= 80 ? 'good' : qualityScore >= 50 ? 'warn' : 'bad';
@@ -31,6 +40,38 @@ export default function Workspace() {
     setUI({ activeTab: id });
     trackTabView(id);
   }
+
+  // Undo last operation via keyboard shortcut
+  const handleUndo = useCallback(() => {
+    const { operationLog, rawData, columns, profiling } = useStore.getState();
+    if (operationLog.length === 0) return;
+    const lastOp = operationLog[operationLog.length - 1];
+    const newLog = operationLog.slice(0, -1);
+    const newData = replayPipeline(rawData, newLog);
+    const newColNames = newData.length > 0 ? Object.keys(newData[0]) : [];
+    const updatedCols = newColNames.map((name) => {
+      const existing = columns.find((c) => c.name === name);
+      return existing || { name, dtype: 'string' };
+    });
+    const newStats = computeColumnStats(newData, updatedCols);
+    useStore.getState().setCleanedData(newData);
+    useStore.getState().setColumns(updatedCols);
+    useStore.getState().removeOperation(lastOp.id);
+    useStore.getState().setProfiling({
+      ...profiling,
+      columnStats: newStats,
+      rowCount: newData.length,
+      columnCount: updatedCols.length,
+    });
+    useStore.getState().addToast('info', `Undid: ${lastOp.description || lastOp.op}`);
+  }, []);
+
+  useKeyboardShortcuts({
+    onUndo: handleUndo,
+    onExport: () => setExportOpen(true),
+    onTabChange: handleTabChange,
+    onHelp: () => setShortcutsOpen(true),
+  });
 
   return (
     <div className="workspace-layout">
@@ -77,10 +118,43 @@ export default function Workspace() {
             {operationLog.length > 0 && (
               <div className="badge badge-accent">{operationLog.length} ops</div>
             )}
+            <ShareButton />
             <FeedbackButton />
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setShortcutsOpen(true)}
+              title="Keyboard shortcuts (?)"
+              style={{ padding: '2px 6px', fontSize: 14 }}
+            >
+              ?
+            </button>
             <ThemeSwitcher />
           </div>
         </div>
+
+        {/* Shared ops banner */}
+        {sharedOpsBanner && (
+          <div className="shared-ops-banner">
+            <span>
+              Shared pipeline detected ({sharedOpsBanner.length} step{sharedOpsBanner.length !== 1 ? 's' : ''}).
+            </span>
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                useStore.getState().applySharedOps(sharedOpsBanner);
+                setSharedOpsBanner(null);
+              }}
+            >
+              Apply
+            </button>
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setSharedOpsBanner(null)}
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         {/* Progress strip */}
         {ui.isLoading && (
@@ -123,6 +197,9 @@ export default function Workspace() {
 
       {/* Export drawer */}
       {exportOpen && <ExportPanel onClose={() => setExportOpen(false)} />}
+
+      {/* Keyboard shortcuts modal */}
+      {shortcutsOpen && <KeyboardShortcutsModal onClose={() => setShortcutsOpen(false)} />}
     </div>
   );
 }

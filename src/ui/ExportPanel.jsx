@@ -8,6 +8,7 @@ import { generatePythonScript } from '../export/pythonScriptGen.js';
 import { generateRScript } from '../export/rScriptGen.js';
 import { triggerDownload } from '../export/csvExporter.js';
 import { downloadParquet } from '../export/parquetExporter.js';
+import { downloadNotebook } from '../export/notebookExporter.js';
 
 export default function ExportPanel({ onClose }) {
   const { cleanedData, rawData, operationLog, profiling, ui } = useStore();
@@ -145,6 +146,15 @@ export default function ExportPanel({ onClose }) {
                   <button className="btn btn-primary" onClick={handleDownloadScript}>
                     Download {scriptFilename}
                   </button>
+                  {scriptLang === 'python' && (
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => { downloadNotebook(operationLog, filename); trackExport('notebook'); }}
+                      title="Download as Jupyter notebook (.ipynb)"
+                    >
+                      Notebook (.ipynb)
+                    </button>
+                  )}
                   <button
                     className="btn btn-secondary btn-sm"
                     onClick={() => setScriptVisible((v) => !v)}
